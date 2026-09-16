@@ -51,3 +51,24 @@ const registrarIncidencia = (req, res) => {
 };
 
 module.exports = { registrarIncidencia };
+
+// Ejercicio 3: Listar todas las incidencias (GET)
+const listarIncidencias = (req, res) => {
+    // Retorna todo el arreglo en formato JSON
+    res.json(incidencias);
+};
+
+// Ejercicio 4: Buscar Incidencia por ID (GET)
+const buscarIncidenciaPorId = (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    // Uso del método find() para buscar el objeto exacto
+    const incidencia = incidencias.find(inc => inc.id === id);
+    
+    // Contemplar alternativas de respuesta con if/else
+    if (incidencia) {
+        res.json(incidencia);
+    } else {
+        res.status(404).json({ mensaje: "Incidencia no encontrada" });
+    }
+};
