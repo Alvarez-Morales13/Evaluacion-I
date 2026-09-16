@@ -52,13 +52,13 @@ const registrarIncidencia = (req, res) => {
 
 module.exports = { registrarIncidencia };
 
-// Ejercicio 3: Listar todas las incidencias (GET)
+// Ejercicio 3: Listar todas las incidencias 
 const listarIncidencias = (req, res) => {
     // Retorna todo el arreglo en formato JSON
     res.json(incidencias);
 };
 
-// Ejercicio 4: Buscar Incidencia por ID (GET)
+// Ejercicio 4: Buscar Incidencia por ID 
 const buscarIncidenciaPorId = (req, res) => {
     const id = parseInt(req.params.id);
     
@@ -68,6 +68,44 @@ const buscarIncidenciaPorId = (req, res) => {
     // Contemplar alternativas de respuesta con if/else
     if (incidencia) {
         res.json(incidencia);
+    } else {
+        res.status(404).json({ mensaje: "Incidencia no encontrada" });
+    }
+};
+
+// Ejercicio 5: Cambiar Estado de Incidencia
+const cambiarEstado = (req, res) => {
+    const id = parseInt(req.params.id); 
+    const { estado } = req.body;
+    
+    const incidencia = incidencias.find(i => i.id === id);
+    if (!incidencia) return res.status(404).json({ mensaje: "Incidencia no encontrada" });
+    
+    // Requisito obligatorio: Uso exclusivo de Switch
+    switch (estado) {
+        case "Pendiente": 
+        case "En Proceso": 
+        case "Resuelta": 
+        case "Cancelada":
+            incidencia.estado = estado; 
+            res.json({ mensaje: "Estado actualizado", incidencia }); 
+            break;
+        default: 
+            res.status(400).json({ mensaje: "Estado inválido" });
+    }
+};
+
+// Ejercicio 6: Eliminar Incidencia 
+const eliminarIncidencia = (req, res) => {
+    const id = parseInt(req.params.id); 
+    
+    // Requisito: Uso de findIndex() para saber en qué posición está
+    const index = incidencias.findIndex(i => i.id === id);
+    
+    if (index !== -1) { 
+        // Requisito: Uso de splice() para eliminar 1 elemento en esa posición
+        incidencias.splice(index, 1); 
+        res.json({ mensaje: "Incidencia eliminada" }); 
     } else {
         res.status(404).json({ mensaje: "Incidencia no encontrada" });
     }
