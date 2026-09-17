@@ -50,8 +50,6 @@ const registrarIncidencia = (req, res) => {
     res.status(201).json({ mensaje: "Incidencia registrada correctamente" });
 };
 
-module.exports = { registrarIncidencia };
-
 // 3. Listar todas las incidencias 
 const listarIncidencias = (req, res) => {
     // Retorna todo el arreglo en formato JSON
@@ -73,7 +71,7 @@ const buscarIncidenciasPorID = (req, res) => {
 };
 
 // 5. Cambiar Estado de Incidencia
-const cambiarEstado = (req, res) => {
+const cambiarEstadoDeIncidencias = (req, res) => {
     const id = parseInt(req.params.id); 
     const { estado } = req.body;
     
@@ -94,7 +92,7 @@ const cambiarEstado = (req, res) => {
 };
 
 // 6. Eliminar Incidencia 
-const eliminarIncidencia = (req, res) => {
+const eliminarIncidencias = (req, res) => {
     const id = parseInt(req.params.id); 
     
     const index = incidencias.findIndex(i => i.id === id);
@@ -119,7 +117,7 @@ const obtenerEstadisticas = (req, res) => {
 };
 
 // 8. Clasificación Automática
-const clasificarIncidencia = (req, res) => {
+const clasificarIncidencias = (req, res) => {
     const id = parseInt(req.params.id);
     const incidencia = incidencias.find(inc => inc.id === id);
 
@@ -149,3 +147,12 @@ const clasificarIncidencia = (req, res) => {
     });
 };
 
+module.exports = { 
+    registrarIncidencia,
+    listarIncidencias,
+    buscarIncidenciasPorID,
+    cambiarEstadoDeIncidencias,
+    eliminarIncidencias,
+    obtenerEstadisticas,
+    clasificarIncidencias
+};
