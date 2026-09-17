@@ -4,7 +4,7 @@ const { limpiarTexto } = require('../utils/helpers');
 const incidencias = []; 
 let idCounter = 1;
 
-// 2: Registrar Incidencia
+// 2. Registrar Incidencia
 const registrarIncidencia = (req, res) => {
     let { empleado, area, descripcion, prioridad } = req.body;
 
@@ -13,7 +13,7 @@ const registrarIncidencia = (req, res) => {
         return res.status(400).json({ mensaje: "Todos los campos obligatorios" });
     }
 
-    // Limpiamos los textos usando nuestro helper.
+    // Limpiamos los textos usando nuestro helpers.
     empleado = limpiarTexto(empleado); 
     area = limpiarTexto(area); 
     descripcion = limpiarTexto(descripcion); 
@@ -52,20 +52,19 @@ const registrarIncidencia = (req, res) => {
 
 module.exports = { registrarIncidencia };
 
-// Ejercicio 3: Listar todas las incidencias 
+// 3. Listar todas las incidencias 
 const listarIncidencias = (req, res) => {
     // Retorna todo el arreglo en formato JSON
     res.json(incidencias);
 };
 
-// Ejercicio 4: Buscar Incidencia por ID 
-const buscarIncidenciaPorId = (req, res) => {
+// 4. Buscar Incidencia por ID 
+const buscarIncidenciasPorID = (req, res) => {
     const id = parseInt(req.params.id);
     
     // Uso del método find() para buscar el objeto exacto
     const incidencia = incidencias.find(inc => inc.id === id);
     
-    // Contemplar alternativas de respuesta con if/else
     if (incidencia) {
         res.json(incidencia);
     } else {
@@ -73,7 +72,7 @@ const buscarIncidenciaPorId = (req, res) => {
     }
 };
 
-// Ejercicio 5: Cambiar Estado de Incidencia
+// 5. Cambiar Estado de Incidencia
 const cambiarEstado = (req, res) => {
     const id = parseInt(req.params.id); 
     const { estado } = req.body;
@@ -81,7 +80,6 @@ const cambiarEstado = (req, res) => {
     const incidencia = incidencias.find(i => i.id === id);
     if (!incidencia) return res.status(404).json({ mensaje: "Incidencia no encontrada" });
     
-    // Requisito obligatorio: Uso exclusivo de Switch
     switch (estado) {
         case "Pendiente": 
         case "En Proceso": 
@@ -95,18 +93,59 @@ const cambiarEstado = (req, res) => {
     }
 };
 
-// Ejercicio 6: Eliminar Incidencia 
+// 6. Eliminar Incidencia 
 const eliminarIncidencia = (req, res) => {
     const id = parseInt(req.params.id); 
     
-    // Requisito: Uso de findIndex() para saber en qué posición está
     const index = incidencias.findIndex(i => i.id === id);
     
     if (index !== -1) { 
-        // Requisito: Uso de splice() para eliminar 1 elemento en esa posición
         incidencias.splice(index, 1); 
         res.json({ mensaje: "Incidencia eliminada" }); 
     } else {
         res.status(404).json({ mensaje: "Incidencia no encontrada" });
     }
 };
+
+// 7. Endpoint de Estadisticas
+const obtenerEstadisticas = (req, res) => {
+    res.json({
+        totalIncidencias: incidencias.length,
+        pendientes: incidencias.filter(inc => inc.estado === "Pendiente").length,
+        enProceso: incidencias.filter(inc => inc.estado === "En Proceso").length,
+        resueltas: incidencias.filter(inc => inc.estado === "Resuelta").length,
+        canceladas: incidencias.filter(inc => inc.estado === "Cancelada").length
+    });
+};
+
+// 8. Clasificación Automática
+const clasificarIncidencia = (req, res) => {
+    const id = parseInt(req.params.id);
+    const incidencia = incidencias.find(inc => inc.id === id);
+
+    if (!incidencia) {
+        return res.status(404).json({ mensaje: "Incidencia no encontrada" });
+    }
+
+    let clasificacion = "";
+
+    switch (incidencia.prioridad) {
+        case "Alta":
+            clasificacion = "Crítica";
+            break;
+        case "Media":
+            clasificacion = "Importante";
+            break;
+        case "Baja":
+            clasificacion = "Normal";
+            break;
+        default:
+            clasificacion = "Desconocida";
+    }
+
+    res.json({
+        id: incidencia.id,
+        clasificacion: clasificacion
+    });
+};
+
